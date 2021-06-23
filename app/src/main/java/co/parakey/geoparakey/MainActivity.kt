@@ -2,6 +2,7 @@ package co.parakey.geoparakey
 
 import android.Manifest
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -31,7 +32,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         Notification.createNotificationChannel(this)
+
         geofencingClient = LocationServices.getGeofencingClient(this)
+
         createEntreportGeofence()
         initGeofences()
     }
@@ -82,10 +85,24 @@ class MainActivity : AppCompatActivity() {
         }.build()
     }
 
+    private fun areGeoFencesRegistered(): Boolean {
+        return getSharedPreferences(GEO_PREF_NAME, Context.MODE_PRIVATE)
+            .getBoolean(GEO_ACTIVATION_KEY, false)
+    }
+
+    private fun setGeofencesAsActivated(){
+        getSharedPreferences(GEO_PREF_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(GEO_ACTIVATION_KEY, true)
+            .apply()
+    }
+
     companion object {
         private const val REQUEST_ID = "Parakey"
         private const val PARAKEY_LAT = 57.70566592293835
         private const val PARAKEY_LONG = 11.966665356381512
         private const val GEO_RADIUS_METERS = 100f
+        private const val GEO_PREF_NAME = "geoPref"
+        private const val GEO_ACTIVATION_KEY = "isPresnet"
     }
 }
