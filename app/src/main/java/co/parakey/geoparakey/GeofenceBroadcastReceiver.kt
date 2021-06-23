@@ -3,9 +3,6 @@ package co.parakey.geoparakey
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
@@ -16,7 +13,7 @@ class GeofenceBroadcastReceiver: BroadcastReceiver() {
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
         if (geofencingEvent.hasError()) {
             val errorMessage = GeofenceStatusCodes.getStatusCodeString(geofencingEvent.errorCode)
-            sendNotification(context, "Error", errorMessage)
+            Notification.sendNotification(context, "Error", errorMessage)
             return
         }
 
@@ -31,39 +28,20 @@ class GeofenceBroadcastReceiver: BroadcastReceiver() {
         val geofenceTriggered = geofencingEvent.triggeringGeofences.first()
         val details = "ENTER: ${geofenceTriggered.requestId}"
 
-        sendNotification(context, details, "Hejsan, click to open the door")
+        Notification.sendNotification(context, details, "Hejsan, click to open the door")
     }
 
     private fun handleGeofenceExit(context: Context?, geofencingEvent: GeofencingEvent) {
         val geofenceTriggered = geofencingEvent.triggeringGeofences.first()
         val details = "EXIT: ${geofenceTriggered.requestId}"
 
-        sendNotification(context, details, "Hej då!!")
+        Notification.sendNotification(context, details, "Hej då!!")
     }
 
     private fun handleGeofenceOther(context: Context?, geofencingEvent: GeofencingEvent) {
         val geofenceTriggered = geofencingEvent.triggeringGeofences.first()
         val details = "OTHER: ${geofenceTriggered.requestId}"
 
-        sendNotification(context, details, "There is some other trigger")
-    }
-
-    private fun sendNotification(context: Context?, text: String, content: String){
-        Log.i(TAG, text)
-        val builder = NotificationCompat.Builder(context!!, Notification.CHANNEL_ID)
-            .setContentTitle(text)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentText(content)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-
-        with(NotificationManagerCompat.from(context)) {
-            val notificationId = (1..10000).random()
-            notify(notificationId, builder.build())
-        }
-    }
-
-    companion object {
-        private const val TAG = "GeofenceBroadcastReceiver"
+        Notification.sendNotification(context, details, "There is some other trigger")
     }
 }
